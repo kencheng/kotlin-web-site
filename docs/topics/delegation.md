@@ -7,18 +7,19 @@ A class `Derived` can implement an interface `Base` by delegating all of its pub
 
 ```kotlin
 interface Base {
-    fun print()
+    fun printMessage()
 }
 
 class BaseImpl(val x: Int) : Base {
-    override fun print() { print(x) }
+    override fun printMessage() { print(x) }
 }
 
 class Derived(b: Base) : Base by b
 
 fun main() {
     val base = BaseImpl(10)
-    Derived(base).print()
+    Derived(base).printMessage()
+    // 10
 }
 ```
 {kotlin-runnable="true"}
@@ -29,8 +30,8 @@ of `Derived` and the compiler will generate all the methods of `Base` that forwa
 ## Overriding a member of an interface implemented by delegation 
 
 [Overrides](inheritance.md#overriding-methods) work as you expect: the compiler will use your `override` 
-implementations instead of those in the delegate object. If you want to add `override fun printMessage() { print("abc") }` to 
-`Derived`, the program would print *abc* instead of *10* when `printMessage` is called:
+implementations instead of those in the delegate object. If you add `override fun printMessage() { print("abc") }` to 
+`Derived`, the following program would print *abc* instead of *10* when `printMessage` is called:
 
 ```kotlin
 interface Base {
@@ -51,6 +52,7 @@ fun main() {
     val base = BaseImpl(10)
     Derived(base).printMessage()
     Derived(base).printMessageLine()
+    // abc10
 }
 ```
 {kotlin-runnable="true"}
@@ -78,7 +80,10 @@ fun main() {
     val b = BaseImpl(10)
     val derived = Derived(b)
     derived.print()
+    // BaseImpl: x = 10
+
     println(derived.message)
+    // Message of Derived
 }
 ```
 {kotlin-runnable="true"}
