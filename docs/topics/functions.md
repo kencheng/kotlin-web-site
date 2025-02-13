@@ -220,8 +220,33 @@ Inside a function, a `vararg`-parameter of type `T` is visible as an array of `T
 variable has type `Array<out T>`.
 
 Only one parameter can be marked as `vararg`. If a `vararg` parameter is not the last one in the list, values for the
-subsequent parameters can be passed using named argument syntax, or, if the parameter has a function type, by passing
-a lambda outside the parentheses.
+subsequent parameters can be passed using named argument syntax, or, if eligible, by passing
+a [trailing lambda](lambdas.md#passing-trailing-lambdas). For example:
+
+```kotlin
+fun foo(vararg strs: String, format: (String) -> String) {
+    print("Called foo:")
+    for (str in strs) {
+        print(" ${format(str)},")
+    }
+    println()
+}
+
+fun main() {
+    // Passing via named argument syntax.
+    foo("a", "b", "c", format = { it.uppercase() })
+    // Called foo: A, B, C,
+
+    // Passing a lambda outside the parentheses.
+    foo("x", "y") { it.uppercase() }
+    // Called foo: X, Y,
+
+    // Parenthesis are optional if the `vararg` is intentionally empty.
+    foo { it.uppercase() }
+    // Called foo:
+}
+```
+{kotlin-runnable="true"}
 
 When you call a `vararg`-function, you can pass arguments individually, for example `asList(1, 2, 3)`. If you already have
 an array and want to pass its contents to the function, use the *spread* operator (prefix the array with `*`):
