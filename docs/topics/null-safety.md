@@ -159,8 +159,8 @@ fun main() {
     // Provides alternative if the condition is not met  
     } else {
         print("Empty string")
-        // String of length 6
     }
+    // String of length 6
 //sampleEnd
 }
 ```
@@ -207,11 +207,16 @@ you write the following:
 bob?.department?.head?.name
 ```
 
-This chain returns `null` if any of its properties are `null`. Here's the equivalent of the same safe call but with the `if` conditional:
+This chain returns `null` if any of its properties are `null`. Here's the equivalent of the same safe call but with an `if` expression:
 
 ```kotlin
-if (person != null && person.department != null) {
-    person.department.head = managersPool.getManager()
+if (person != null &&
+    person.department != null &&
+    person.department.head != null
+) {
+    person.department.head.name
+} else {
+    null
 }
 ```
 
@@ -331,48 +336,47 @@ For example, the [`.toString()`](https://kotlinlang.org/api/latest/jvm/stdlib/ko
 can be called on a nullable receiver. When invoked on a `null` value, it safely returns the string `"null"` without throwing an exception:
 
 ```kotlin
-//sampleStart
+// Defines a simple Person class
+data class Person(val name: String)
+
 fun main() {
+//sampleStart
     // Assigns null to a nullable Person object stored in the person variable
     val person: Person? = null
 
     // Applies .toString to the nullable person variable and prints a string
     println(person.toString())
     // null
-}
-
-// Defines a simple Person class
-data class Person(val name: String)
 //sampleEnd
+}
 ```
 {kotlin-runnable="true"}
 
 In the example above, even though `person` is `null`, the `.toString()` function safely returns the string `"null"`. This can be helpful for debugging and logging.
 
-If you expect the `.toString()` function to return a nullable string (either a string representation or `null`), use the [safe-call operator `?.`](#safe-call-operator).
+If you want to handle null values yourself instead of letting the function handle it, use the [safe-call operator `?.`](#safe-call-operator).
 The `?.` operator calls `.toString()` only if the object is not `null`, otherwise it returns `null`:
 
 ```kotlin
-//sampleStart
-fun main() {
-    // Assigns a nullable Person object to a variable
-    val person1: Person? = null
-    val person2: Person? = Person("Alice")
-
-    // Prints "null" if person is null; otherwise prints the result of person.toString()
-    println(person1?.toString())
-    // null
-    println(person2?.toString())
-    // Person(name=Alice)
-}
-
 // Defines a Person class
 data class Person(val name: String)
+
+fun main() {
+//sampleStart
+    val person: Person? = null
+
+    // toString() on a null value returns the string "null"
+    println(person.toString() is String)
+    // true
+
+    // The safe-call operator prevents toString() from being called
+    // and instead returns the null value.
+    println(person?.toString() is String)
+    // false
 //sampleEnd
+}
 ```
 {kotlin-runnable="true"}
-
-The `?.` operator allows you to safely handle potential `null` values while still accessing properties or functions of objects that might be `null`.
 
 ## Let function
 
@@ -426,7 +430,7 @@ fun main() {
 {kotlin-runnable="true"}
 
 The code above prints `null` because `a` is not an `Int`, so the cast fails safely. It also prints
-`"Hello, Kotlin!"` because it matches the `String?` type, so the safe cast succeeds.
+`"Hello, Kotlin!"` because it matches the `String` type, so the safe cast succeeds.
 
 ## Collections of a nullable type
 
